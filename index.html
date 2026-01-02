@@ -1,0 +1,169 @@
+<!doctype <!doctype>
+<html lang="en"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Modern Stopwatch</title> 
+  <style>
+        /* ===== RESET & BASIC STYLE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+        background: linear-gradient(135deg, #00c6ff, #0072ff); 
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        /* ===== STOPWATCH CONTAINER ===== */
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            width: 350px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        /* ===== DISPLAY TIME ===== */
+        #time {
+            font-size: 50px;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        /* ===== BUTTON STYLING ===== */
+        .buttons button {
+            margin: 10px;
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #start {
+            background: limegreen;
+            color: black;
+        }
+        #start:hover {
+            background: #00cc00;
+        }
+
+        #pause {
+            background: gold;
+            color: black;
+        }
+        #pause:hover {
+            background: #ffcc00;
+        }
+
+        #reset {
+            background: red;
+            color: white;
+        }
+        #reset:hover {
+            background: #cc0000;
+        }
+
+        #lap {
+            background: cyan;
+            color: black;
+        }
+        #lap:hover {
+            background: #00e6e6;
+        }
+
+        /* ===== LAP LIST ===== */
+        .laps {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            padding-right: 10px;
+        }
+
+        .laps div {
+            background: rgba(0,0,0,0.3);
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 8px;
+        }
+    </style> 
+ </head> 
+ <body> <!-- ===== STOPWATCH UI ===== --> 
+  <div class="container"> 
+   <h2>⏱ Stopwatch</h2> <!-- Display main time --> 
+   <div id="time">
+     00:00:00 
+   </div> <!-- Buttons --> 
+   <div class="buttons"> <button id="start">Start</button> <button id="pause">Pause</button> <button id="reset">Reset</button> <button id="lap">Lap</button> 
+   </div> <!-- Lap Time Records --> 
+   <div class="laps" id="laps"></div> 
+  </div> <!-- ===== JAVASCRIPT STOPWATCH LOGIC ===== --> 
+  <script>
+        let startTime = 0;
+        let elapsedTime = 0;
+        let timerInterval;
+
+        const timeDisplay = document.getElementById("time");
+        const lapContainer = document.getElementById("laps");
+
+        /* ===== FORMAT TIME AS HH:MM:SS ===== */
+        function formatTime(ms) {
+            let seconds = Math.floor(ms / 1000);
+            let minutes = Math.floor(seconds / 60);
+            let hours = Math.floor(minutes / 60);
+
+            seconds %= 60;
+            minutes %= 60;
+
+            return (
+                String(hours).padStart(2, '0') + ":" +
+                String(minutes).padStart(2, '0') + ":" +
+                String(seconds).padStart(2, '0')
+            );
+        }
+
+        /* ===== START BUTTON ===== */
+        document.getElementById("start").onclick = function() {
+            startTime = Date.now() - elapsedTime;  
+            timerInterval = setInterval(() => {
+                elapsedTime = Date.now() - startTime;
+                timeDisplay.textContent = formatTime(elapsedTime);
+            }, 100);
+        };
+
+        /* ===== PAUSE BUTTON ===== */
+        document.getElementById("pause").onclick = function() {
+            clearInterval(timerInterval);
+        };
+
+        /* ===== RESET BUTTON ===== */
+        document.getElementById("reset").onclick = function() {
+            clearInterval(timerInterval);
+            elapsedTime = 0;
+            timeDisplay.textContent = "00:00:00";
+            lapContainer.innerHTML = ""; // Clear laps
+        };
+
+        /* ===== LAP BUTTON ===== */
+        document.getElementById("lap").onclick = function() {
+            if (elapsedTime === 0) return;
+
+            const lapTime = document.createElement("div");
+            lapTime.textContent = "Lap: " + formatTime(elapsedTime);
+            lapContainer.appendChild(lapTime);
+        };
+    </script> 
+ </body>
+</html>
